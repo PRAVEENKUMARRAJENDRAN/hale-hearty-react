@@ -7,11 +7,11 @@ const token = JSON.parse(localStorage.getItem("token"));
 
 export const register = createAsyncThunk(
   "auth/register",
-  async ({ firstName, lastName, email, password }, thunkAPI) => {
+  async ({ name, email, password }, thunkAPI) => {
     try {
-      const response = await AuthApi.register(firstName, lastName, email, password);
-      thunkAPI.dispatch(setMessage(response.data.message));
-      return response.data;
+      const data = await AuthApi.register(name, email, password);
+     // thunkAPI.dispatch(setMessage(response.data.message));
+     return { token: data };
     } catch (error) {
       const message =
         (error.response &&
@@ -58,7 +58,8 @@ const authSlice = createSlice({
   initialState,
   extraReducers: {
     [register.fulfilled]: (state, action) => {
-      state.isLoggedIn = false;
+      state.isLoggedIn = true;
+      state.token = action.payload.token;
     },
     [register.rejected]: (state, action) => {
       state.isLoggedIn = false;
